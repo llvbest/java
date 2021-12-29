@@ -23,7 +23,7 @@ public class Account {
         return Account.accountName;
     }
 
-    public static void setAccountName(String accountName) {
+    private static void setAccountName(String accountName) {
         Account.accountName = accountName;
     }
 
