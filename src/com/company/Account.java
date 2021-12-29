@@ -6,7 +6,7 @@ public class Account {
 
     //name account
     protected static String accountName = "Alice";
-    //name password не в открітом виде, а какой то надежный метод шифрования md5 там и сравнивать хеши
+    //name password не в открытом виде, а какой то надежный метод шифрования md5 там и сравнивать хеши
     protected static String password = "12345";
     //balance account
     protected static double balance = 0.00;
@@ -27,9 +27,9 @@ public class Account {
         Account.accountName = accountName;
     }
 
-    // например для имени исключения спец символов
+    // например для имени, исключения спец символов, регистр, регулярки, длины имени/пароля ...
     private boolean validate() {
-        //запись логов валидации и не/успешной операции
+        //запись логов валидации и не|успешной операции
         Log.writeDB();
         return true;// false
     }
@@ -37,14 +37,14 @@ public class Account {
     //сохранение в хранилище и правила валидации
     public boolean save() {
         //сохранение в бд и валидация по правилам описанным выше в модели,
-        //если аккаунт не найдет тогда INSERT
+        //если аккаунт не найдет тогда INSERT c сгенеренным паролем и показ уведомления клиенту
 
-        //запись логов сохранения и не/успешной операции
+        //запись логов сохранения и не|успешной операции
         Log.writeDB();
         return true;// false
     }
 
-    //поиск аккаунта
+    //find Account
     public Account find(String accountNumber) {
         //поиск в бд аккаунта по идентификатору уникальному
         Log.writeDB();
