@@ -67,8 +67,8 @@ public class Main {
             case 3:  withdraw();
                 menu();
                 return 3;
-            case 4:  deposit();
-                transfer();
+            case 4:  transfer();
+                menu();
                 return 4;
         }
 
@@ -138,7 +138,7 @@ public class Main {
          * и зачисление средств на баланс... */
         System.out.println("Your new balance is: " + Account.getBalance());
         if(Account.balance < 0)
-            System.out.println("Owned $" + Account.getBalance() + " to " + accountTransfer);
+            System.out.println("Owned $" + Account.getBalance() + "  to  " + accountTransfer);
 
         Log.writeDB();
     }
