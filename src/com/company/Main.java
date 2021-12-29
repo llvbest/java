@@ -44,7 +44,7 @@ public class Main {
             System.out.println("FAIL");
             return "void";
         }*/
-        /** проверка пароля (md5...) и валидация полей модели, выборка из субд
+        /** проверка пароля (md5...) и валидация полей модели, выборка из субд Account.find(accountNumber)
          * и массовое заполнение модели Account */
         if (accountNumber.equals(Account.accountName) && accountPassword.equals(Account.password)) {
             result = "Welcome ATM! Glad to see you, Dear "+Account.getAccountName()+"!\n";
@@ -129,13 +129,17 @@ public class Main {
     public static void transfer()
     {
         Scanner input = new Scanner(System.in);
-        System.out.println("Enter account transfer:");
+        System.out.println("Enter account target name transfer:");
         String accountTransfer = input.nextLine();
         System.out.println("Enter amount transfer:");
         double amountTransfer = Math.abs(input.nextDouble());
 
         /** обернуть все в транцзакции манипуляции с балансами!, у разных СУБД уровни разные, commet если что*/
         Account.balance -= amountTransfer;
+        //Account.save();
+        //with getter method
+        //AccountTarget.setBalance(AccountTarget.getBalance()+amountTransfer);
+        //AccountTarget.save();
         System.out.println("Transferred $" + amountTransfer + "to " + accountTransfer);
         /** Выборка и заполнение accountTransfer класса Account object или интерфейс можно реализовать...
          * и зачисление средств на баланс... */
