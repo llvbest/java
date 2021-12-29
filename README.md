@@ -1,6 +1,6 @@
 # java
 myJava ATM Сli console application (создал в IDE Intellij консольное приложение)
-default account Alice:12345
+default account - Alice:12345
 _________________________________
 методы заложены базово без взаимодействия с СУБД (уточнял)
 
