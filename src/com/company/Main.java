@@ -4,6 +4,8 @@ import java.util.Arrays;
 import java.util.Scanner;
 import java.security.*;
 
+import static java.lang.Math.abs;
+
 public class Main {
     static Scanner keyboard = new Scanner(System.in);
     static String accountNumber, accountPassword, result;
@@ -60,28 +62,29 @@ public class Main {
         switch (choose) {
             case 1:  displayBalance();
                 menu();
-                return 1;
+                break;
             case 2:  deposit();
                 menu();
-                return 2;
+                break;
             case 3:  withdraw();
                 menu();
-                return 3;
+                break;
             case 4:  transfer();
                 menu();
-                return 4;
+                break;
         }
 
         if (choose == 5) {// 4. Log out
             System.out.println("Goodbue. You are logged out.");
             return 5;
-
         }
+
         if (choose <= 6) {// type in anything greater than 4 and you will get a system error
             System.out.println("System Error");
             menu();
             return 6;
         }
+
         if (choose >= 1) {// type in anything less than 1 and you will get a system error
             System.out.println("System Error");
             menu();
@@ -94,7 +97,7 @@ public class Main {
     {
         Scanner input = new Scanner(System.in);
         System.out.println("Enter deposit amount:");
-        double amount = input.nextDouble();
+        double amount = Math.abs(input.nextDouble());
         System.out.println("Your deposit amount: " + amount);
         Account.balance += amount;
         System.out.println("Your balance is: " + Account.getBalance());
@@ -110,7 +113,7 @@ public class Main {
     {
         Scanner input = new Scanner(System.in);
         System.out.println("Enter withdrawal amount: ");
-        double amount = input.nextDouble();
+        double amount = Math.abs(input.nextDouble());
         System.out.println("Your withdrawal amount: " + amount);
         if(amount <= Account.getBalance()){
             /** обернуть все в транцзакцию!, у разных СУБД уровни разные, commet если что*/
@@ -129,7 +132,7 @@ public class Main {
         System.out.println("Enter account transfer:");
         String accountTransfer = input.nextLine();
         System.out.println("Enter amount transfer:");
-        double amountTransfer = input.nextDouble();
+        double amountTransfer = Math.abs(input.nextDouble());
 
         /** обернуть все в транцзакции манипуляции с балансами!, у разных СУБД уровни разные, commet если что*/
         Account.balance -= amountTransfer;
@@ -138,7 +141,7 @@ public class Main {
          * и зачисление средств на баланс... */
         System.out.println("Your new balance is: " + Account.getBalance());
         if(Account.balance < 0)
-            System.out.println("Owned $" + Account.getBalance() + "  to  " + accountTransfer);
+            System.out.println("Owned $" + Math.abs(Account.getBalance()) + "  to  " + accountTransfer);
 
         Log.writeDB();
     }
