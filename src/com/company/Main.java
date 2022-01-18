@@ -1,52 +1,49 @@
 package com.company;
 import java.lang.System;
-import java.util.Arrays;
+import java.math.BigDecimal;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
-import java.security.*;
-
-import static java.lang.Math.abs;
 
 public class Main {
     static Scanner keyboard = new Scanner(System.in);
     static String accountNumber, accountPassword, result;
     static int choose;
-    static double oldBalance, newBalance;
 
     public static void main(String[] args) {
-	    //welcome
-        System.out.println("Welcome, customer!");
+        try {
+            login();
+        } catch (NoSuchElementException e) {
+            System.err.println(e.getMessage());
+        } catch (IllegalStateException e) {
+            System.err.println(e.getMessage());
+        }
+    }
 
+    public static void login() {
+        //tries
         for (int run = 0; run < 3; run++) {
-            System.out.println("Enter your account number:");
-            accountNumber = keyboard.nextLine();
+            System.out.println("\nEnter your account number:");
+            accountNumber = keyboard.next();
             System.out.println("Enter your account password:");
-            accountPassword = keyboard.nextLine();
+            accountPassword = keyboard.next();
 
             result = checkAccount(accountNumber, accountPassword);
             if (!result.equals("ERROR")) {
                 break;
-            } else if (run == 2) {// you cannot try to log in anymore than times
+            } else if (run == 2) {
                 System.out.println("MAXIMUM TRIES EXCEEDED");
                 return;
             }
-
         }
         menu();
     }
 
     public static String checkAccount(String accountNumber, String accountPassword) {
         String result = "ERROR";
-        /*try {
-            byte[] bytesOfMessage = accountPassword.getBytes("UTF-8");
-            MessageDigest md = MessageDigest.getInstance("MD5");
-            byte[] theDigest = md.digest(bytesOfMessage);
-        } catch (java.io.UnsupportedEncodingException e){
-            System.out.println("FAIL");
-            return "void";
-        }*/
         /** проверка пароля (md5...) и валидация полей модели, выборка из субд Account.find(accountNumber)
          * и массовое заполнение модели Account */
-        if (accountNumber.equals(Account.accountName) && accountPassword.equals(Account.password)) {
+        Account acc= new Account();
+        if (acc.find(accountNumber) && accountPassword.equals(Account.password)) {
             result = "Welcome ATM! Glad to see you, Dear "+Account.getAccountName()+"!\n";
             result += "Your balance is $"+Account.getBalance();
         }
@@ -74,18 +71,19 @@ public class Main {
                 break;
         }
 
-        if (choose == 5) {// 4. Log out
-            System.out.println("Goodbue. You are logged out.");
+        if (choose == 5) {// 5. Log out
+            System.out.println("Goodbue, "+Account.getAccountName());
+            login();
             return 5;
         }
 
-        if (choose <= 6) {// type in anything greater than 4 and you will get a system error
+        if (choose <= 6) {
             System.out.println("System Error");
             menu();
             return 6;
         }
 
-        if (choose >= 1) {// type in anything less than 1 and you will get a system error
+        if (choose >= 1) {
             System.out.println("System Error");
             menu();
             return 7;
@@ -93,31 +91,26 @@ public class Main {
         return choose;
     }
 
-    public static void deposit()
-    {
-        Scanner input = new Scanner(System.in);
+    public static void deposit() {
         System.out.println("Enter deposit amount:");
-        double amount = Math.abs(input.nextDouble());
+        BigDecimal amount = BigDecimal.valueOf(Math.abs(keyboard.nextDouble()));
         System.out.println("Your deposit amount: " + amount);
-        Account.balance += amount;
+        Account.balance = Account.balance.add(amount);
         System.out.println("Your balance is: " + Account.getBalance());
     }
 
-    public static double displayBalance() {
+    public static int displayBalance() {
         System.out.println("Total balance is: $" + Account.getBalance());
-        oldBalance = 0.00;
         return 1;
     }
 
-    public static void withdraw()
-    {
-        Scanner input = new Scanner(System.in);
+    public static void withdraw() {
         System.out.println("Enter withdrawal amount: ");
-        double amount = Math.abs(input.nextDouble());
+        BigDecimal amount = BigDecimal.valueOf(Math.abs(keyboard.nextDouble()));
         System.out.println("Your withdrawal amount: " + amount);
-        if(amount <= Account.getBalance()){
+        if( amount.compareTo(Account.getBalance()) < 1 ){//amount <= Account.getBalance()
             /** обернуть все в транцзакцию!, у разных СУБД уровни разные, commet если что*/
-            Account.balance -= amount;
+            Account.balance = Account.balance.subtract(amount);
             System.out.println("Your new balance is: " + Account.getBalance());
             Log.writeDB();
         } else {
@@ -126,26 +119,21 @@ public class Main {
     }
 
     //String accountTransfer, Double amountTransfer
-    public static void transfer()
-    {
-        Scanner input = new Scanner(System.in);
+    public static void transfer() {
         System.out.println("Enter account target name transfer:");
-        String accountTransfer = input.nextLine();
+        String accountTransfer = keyboard.nextLine();
         System.out.println("Enter amount transfer:");
-        double amountTransfer = Math.abs(input.nextDouble());
+        BigDecimal amountTransfer = BigDecimal.valueOf(Math.abs(keyboard.nextDouble()));
 
         /** обернуть все в транцзакции манипуляции с балансами!, у разных СУБД уровни разные, commet если что*/
-        Account.balance -= amountTransfer;
-        //Account.save();
-        //with getter method
-        //AccountTarget.setBalance(AccountTarget.getBalance()+amountTransfer);
-        //AccountTarget.save();
+        Account.balance = Account.balance.subtract(amountTransfer);
+
         System.out.println("Transferred $" + amountTransfer + "to " + accountTransfer);
         /** Выборка и заполнение accountTransfer класса Account object или интерфейс можно реализовать...
          * и зачисление средств на баланс... */
         System.out.println("Your new balance is: " + Account.getBalance());
-        if(Account.balance < 0)
-            System.out.println("Owned $" + Math.abs(Account.getBalance()) + "  to  " + accountTransfer);
+        if(Account.balance.doubleValue() < 0)
+            System.out.println("Owned $" + Account.getBalance() + "  to  " + accountTransfer);
 
         Log.writeDB();
     }
